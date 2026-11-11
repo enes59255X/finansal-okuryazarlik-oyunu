@@ -27,7 +27,7 @@ on conflict (symbol) do nothing;
 -- 30 günlük geçmiş (deterministik dalgalanma, grafikler boş kalmasın)
 insert into public.price_history (asset_id, price, recorded_at)
 select a.id,
-       greatest(round(a.current_price * (1 + 0.02 * sin(i * 0.7) + 0.01 * cos(i * 1.3)), 2), 0.01),
+       greatest(round((a.current_price * (1 + 0.02 * sin(i * 0.7) + 0.01 * cos(i * 1.3)))::numeric, 2), 0.01),
        now() - make_interval(days => i)
 from public.assets a
 cross join generate_series(0, 29) as i

@@ -52,6 +52,7 @@ npm run dev
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Vitest birim testleri |
+| `pwsh scripts/db-verify.ps1` | Geçici Postgres container'ında RPC + RLS senaryolarını çalıştırır (Docker gerekir) |
 
 ## Mimari
 
@@ -63,6 +64,9 @@ src/
   pages/         giriş, piyasa, varlık, portföy, liderlik
 supabase/
   migrations/    şema, RLS, RPC, seed
+  tests/         auth stub + Faz 1 RPC/RLS senaryoları
+scripts/
+  db-verify.ps1  yerel Docker ile veritabanı doğrulaması
 ```
 
 ### Güvenlik modeli
