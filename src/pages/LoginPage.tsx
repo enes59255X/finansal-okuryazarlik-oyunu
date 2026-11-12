@@ -48,10 +48,10 @@ export function LoginPage() {
     <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       <section className="relative hidden flex-col justify-between overflow-hidden border-r border-slate-800/60 p-12 lg:flex">
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-lg font-black text-slate-950">
-            ₺
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-xs font-black text-slate-950">
+            11B
           </span>
-          <span className="text-sm font-semibold tracking-tight text-white">Piyasa Akademi</span>
+          <span className="text-sm font-semibold tracking-tight text-white">11B Kulüp</span>
         </div>
 
         <div className="max-w-lg">
@@ -61,20 +61,20 @@ export function LoginPage() {
             transition={{ duration: 0.4 }}
             className="text-4xl font-semibold leading-tight tracking-tight text-white"
           >
-            10.000 ₺ sanal sermaye.
+            Kadronu kur.
             <br />
-            <span className="text-emerald-400">Gerçek piyasa refleksleri.</span>
+            <span className="text-emerald-400">Sahada ve piyasada kazan.</span>
           </motion.h1>
           <p className="mt-5 text-base leading-relaxed text-slate-400">
-            Petrol şokundan faiz kararına kadar makro olayları portföyünde hissederek öğren. Riski bedava
-            al: para sanal, ders gerçek.
+            FIFA tipi oyuncu kartları, dakika dakika maç simülasyonu ve hareket eden bir ekonomi.
+            Para sanal, rekabet gerçek.
           </p>
 
           <dl className="mt-10 grid grid-cols-3 gap-4">
             {[
               { label: 'Başlangıç bakiyesi', value: '10.000 ₺' },
-              { label: 'Varlık', value: '19' },
-              { label: 'Kriz senaryosu', value: '4' },
+              { label: 'Oyuncu', value: '14' },
+              { label: 'Varlık', value: '36' },
             ].map((item) => (
               <div key={item.label} className="rounded-xl border border-slate-800/70 bg-slate-900/40 p-3">
                 <dt className="text-[10px] uppercase tracking-[0.16em] text-slate-500">{item.label}</dt>
@@ -97,8 +97,8 @@ export function LoginPage() {
           className="w-full max-w-sm"
         >
           <div className="mb-6 lg:hidden">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-lg font-black text-slate-950">
-              ₺
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-xs font-black text-slate-950">
+              11B
             </span>
           </div>
 

@@ -15,7 +15,6 @@ const CATEGORY_FILTERS: Array<{ value: AssetCategory | 'all'; label: string }> =
   { value: 'bond', label: 'Tahvil' },
   { value: 'crypto', label: 'Kripto' },
   { value: 'fund', label: 'Fon' },
-  { value: 'player', label: 'Oyuncu' },
 ]
 
 export function MarketPage() {
@@ -68,6 +67,7 @@ export function MarketPage() {
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase()
     return assets.filter((asset) => {
+      if (asset.category === 'player') return false
       const matchesCategory = category === 'all' || asset.category === category
       const matchesQuery =
         needle.length === 0 ||
@@ -93,7 +93,7 @@ export function MarketPage() {
   return (
     <PageShell
       title="Piyasa"
-      subtitle="Sanal borsa açık. Alım-satım yapmak için bir varlık seç."
+      subtitle="Finans modülü: hisse, fon, emtia, tahvil ve kripto."
       actions={
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
           <span className="live-dot h-1.5 w-1.5 rounded-full bg-emerald-400" />

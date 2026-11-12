@@ -135,7 +135,17 @@ export function AssetPage() {
           </div>
         </section>
 
-        <TradePanel asset={asset} position={position} onTraded={() => void load()} />
+        {asset.category === 'player' ? (
+          <section className="rounded-2xl border border-slate-800/70 bg-slate-900/40 p-5 text-sm text-slate-400">
+            <h2 className="text-sm font-semibold text-white">Transfer dönemi kapalı</h2>
+            <p className="mt-2 leading-relaxed">
+              Oyuncu transferleri şu an devre dışı. Kadron yönetim tarafından atanıyor; maç yaparak
+              oyuncularının formunu ve değerini büyütebilirsin.
+            </p>
+          </section>
+        ) : (
+          <TradePanel asset={asset} position={position} onTraded={() => void load()} />
+        )}
       </div>
     </PageShell>
   )

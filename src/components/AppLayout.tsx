@@ -5,11 +5,12 @@ import { fetchGameState } from '../lib/api'
 import { formatTRY } from '../lib/format'
 
 const links = [
-  { to: '/', label: 'Piyasa', end: true },
-  { to: '/squad', label: 'Kadro', end: false },
+  { to: '/', label: 'Kulüp', end: true },
+  { to: '/market', label: 'Piyasa', end: false },
+  { to: '/portfolio', label: 'Portföy', end: false },
   { to: '/news', label: 'Haberler', end: false },
   { to: '/missions', label: 'Görevler', end: false },
-  { to: '/portfolio', label: 'Portföy', end: false },
+  { to: '/casino', label: 'Gazino', end: false },
   { to: '/leaderboard', label: 'Liderlik', end: false },
 ]
 
@@ -36,31 +37,33 @@ export function AppLayout() {
       <header className="sticky top-0 z-20 border-b border-slate-800/70 bg-[#070b12]/85 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
           <NavLink to="/" className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-500 text-sm font-black text-slate-950">
-              ₺
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-500 text-[11px] font-black tracking-tight text-slate-950">
+              11B
             </span>
             <span className="hidden text-sm font-semibold tracking-tight text-white sm:block">
-              Piyasa Akademi
+              11B Kulüp
             </span>
           </NavLink>
 
           <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
-            {nav.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.end}
-                className={({ isActive }) =>
-                  [
-                    'rounded-lg px-3 py-1.5 text-sm font-medium transition',
-                    isActive
-                      ? 'bg-slate-800/80 text-white'
-                      : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200',
-                  ].join(' ')
-                }
-              >
-                {link.label}
-              </NavLink>
+            {nav.map((link, index) => (
+              <span key={link.to} className="flex items-center gap-1">
+                {index === 3 ? <span aria-hidden className="mx-1 h-4 w-px bg-slate-800" /> : null}
+                <NavLink
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) =>
+                    [
+                      'whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm font-medium transition',
+                      isActive
+                        ? 'bg-slate-800/80 text-white'
+                        : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200',
+                    ].join(' ')
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </span>
             ))}
           </nav>
 

@@ -6,6 +6,7 @@ import { ConfigNotice } from './components/ConfigNotice'
 import { isSupabaseConfigured } from './lib/supabase'
 import { AdminPage } from './pages/AdminPage'
 import { AssetPage } from './pages/AssetPage'
+import { CasinoPage } from './pages/CasinoPage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
 import { LoginPage } from './pages/LoginPage'
 import { MarketPage } from './pages/MarketPage'
@@ -22,12 +23,14 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route index element={<MarketPage />} />
+          <Route index element={<SquadPage />} />
+          <Route path="market" element={<MarketPage />} />
+          <Route path="squad" element={<Navigate to="/" replace />} />
           <Route path="asset/:assetId" element={<AssetPage />} />
-          <Route path="squad" element={<SquadPage />} />
           <Route path="news" element={<NewsPage />} />
           <Route path="missions" element={<MissionsPage />} />
           <Route path="portfolio" element={<PortfolioPage />} />
+          <Route path="casino" element={<CasinoPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route element={<AdminOnly />}>
             <Route path="admin" element={<AdminPage />} />
