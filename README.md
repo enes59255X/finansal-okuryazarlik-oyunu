@@ -2,7 +2,7 @@
 
 Sanal para ile piyasa simülasyonu. React + Vite (statik SPA) → Netlify CDN, veri ve yetki → Supabase (Postgres + Auth + RLS).
 
-**Faz 1 durumu:** kimlik doğrulama, piyasa listesi, fiyat grafiği, atomik alım/satım, portföy ve liderlik tablosu çalışır durumda.
+**Durum:** Faz 1 + Faz 2 tamam. Kimlik doğrulama, piyasa listesi, fiyat grafiği, atomik alım/satım, portföy, liderlik, haber akışı, görevler (maaş ödüllü), oyuncular arası para transferi, canlı fiyat motoru ve admin paneli çalışıyor.
 
 ## Gereksinimler
 
@@ -120,10 +120,35 @@ Deploy'u sen tetikleyeceksin; repo bunun için hazır. Sıra:
 | Netlify Environment variables | Panel | Production build |
 | GitHub Secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) | Repo ayarları | CI build adımı (opsiyonel; yoksa build yine geçer) |
 
+## Faz 2 — oyun motoru, görevler, ekonomi
+
+| Konu | Nasıl çalışır |
+| --- | --- |
+| Fiyat motoru | `tick_market()` 60 sn'de bir rastgele yürüyüş uygular; `pg_cron` her dakika tetikler, istemci de sayfa açılışında `p_force=false` ile çağırır (idempotent, erken çağrı bir şey yapmaz). |
+| Oyun saati | `game_state.time_scale` = oyun dakikası / gerçek dakika. Admin 1x–1440x arasında ayarlar; `current_game_time()` oyun saatini döner. |
+| Görevler | 5 görev (`missions`), ilerleme sunucuda hesaplanır (`evaluate_missions`). Ödül bir kez ödenir, `ledger`'a yazılır. |
+| Para transferi | `transfer_cash(alıcı, tutar, not)`: işlem başına ≤ 5.000 ₺, günlük ≤ 20.000 ₺, kendine gönderim yok, kilitler id sırasıyla alınır (deadlock önleme). |
+| Nakit defteri | `ledger`: transfer, görev ödülü ve admin düzeltmelerinin denetim izi. |
+| Haberler | `news.kind`, `related_symbols`, `source`; arayüzde sparkline grafikleriyle kartlar. |
+| Admin | `/admin`: hız çarpanı, anında tick, kriz tetikleme, fiyat ayarı, haber yayınlama, nakit ekleme/çıkarma, oyuncu sıfırlama. |
+
+### Admin yetkisi verme
+
+```sql
+update public.profiles set role = 'admin' where username = 'kullanici_adi';
+```
+
+Admin RPC'leri yalnızca `is_admin()` doğruysa çalışır; arayüzü gizlemek güvenlik sayılmaz.
+
+### Doğrulama
+
+- `pwsh scripts/db-verify.ps1` yerel Postgres'te şema/RLS/RPC senaryolarını çalıştırır.
+- Canlı projede 27 güvenlik testi: yetki yükseltme, transfer limitleri, RLS sızıntısı, doğrudan tablo yazımı, görev ödülünün tekrarı, zorla piyasa tick'i.
+
 ## Yol haritası
 
 - [x] Faz 1 — Şema, RLS, atomik alım/satım, piyasa & portföy arayüzü
-- [ ] Faz 2 — Fiyat motoru (pg_cron), senaryo motoru, Realtime haber, admin paneli, sezonlar
+- [x] Faz 2 — Fiyat motoru (pg_cron), görevler, para transferi, haberler, admin paneli, oyun hızı
 - [ ] Faz 3 — Eğitim katmanı (brifing/quiz/debrief), E2E, izleme, yayın
 
 > Sanal para ile oynanan eğitim simülasyonu. Yatırım tavsiyesi değildir.

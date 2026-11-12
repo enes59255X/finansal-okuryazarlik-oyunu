@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { PageShell } from '../components/PageShell'
+import { TransferCard } from '../components/TransferCard'
 import { fetchPositions, fetchTransactions } from '../lib/api'
 import { formatDate, formatPercent, formatQty, formatTRY } from '../lib/format'
 import { allocation, computePositionMetrics, portfolioValue, totalEquity } from '../lib/portfolio'
@@ -187,6 +188,8 @@ export function PortfolioPage() {
               )}
             </ul>
           </section>
+
+          <TransferCard />
         </aside>
       </div>
     </PageShell>

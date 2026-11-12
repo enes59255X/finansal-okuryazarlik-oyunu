@@ -1,9 +1,13 @@
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
+import { fetchGameState } from '../lib/api'
 import { formatTRY } from '../lib/format'
 
 const links = [
   { to: '/', label: 'Piyasa', end: true },
+  { to: '/news', label: 'Haberler', end: false },
+  { to: '/missions', label: 'Görevler', end: false },
   { to: '/portfolio', label: 'Portföy', end: false },
   { to: '/leaderboard', label: 'Liderlik', end: false },
 ]
@@ -11,11 +15,20 @@ const links = [
 export function AppLayout() {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
+  const [timeScale, setTimeScale] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetchGameState()
+      .then((state) => setTimeScale(Number(state.time_scale)))
+      .catch(() => setTimeScale(null))
+  }, [])
 
   async function handleSignOut() {
     await signOut()
     navigate('/login', { replace: true })
   }
+
+  const nav = profile?.role === 'admin' ? [...links, { to: '/admin', label: 'Yönetim', end: false }] : links
 
   return (
     <div className="min-h-screen">
@@ -31,7 +44,7 @@ export function AppLayout() {
           </NavLink>
 
           <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
-            {links.map((link) => (
+            {nav.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
@@ -51,6 +64,11 @@ export function AppLayout() {
           </nav>
 
           <div className="flex items-center gap-3">
+            {timeScale ? (
+              <span className="hidden rounded-full border border-slate-700/70 bg-slate-800/40 px-2.5 py-1 text-[10px] font-medium text-slate-300 sm:inline">
+                Oyun {timeScale}x
+              </span>
+            ) : null}
             <div className="text-right">
               <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Nakit</p>
               <p className="tabular-nums text-sm font-semibold text-emerald-300">

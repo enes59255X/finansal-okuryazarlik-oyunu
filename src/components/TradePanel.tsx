@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
-import { placeOrder } from '../lib/api'
+import { placeOrder, evaluateMissions } from '../lib/api'
 import { formatPercent, formatQty, formatTRY } from '../lib/format'
 import { round2 } from '../lib/portfolio'
 import type { Asset, Position } from '../lib/types'
@@ -62,6 +62,7 @@ export function TradePanel({ asset, position, onTraded }: TradePanelProps) {
     setBusy(true)
     try {
       await placeOrder(side, asset.id, quantity)
+      await evaluateMissions()
       await refreshProfile()
       onTraded()
       setSuccess(

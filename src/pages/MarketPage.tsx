@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { PageShell } from '../components/PageShell'
-import { fetchAssets, fetchNews, fetchPositions } from '../lib/api'
+import { fetchAssets, fetchNews, fetchPositions, tickMarket } from '../lib/api'
 import { formatDate, formatPercent, formatQty, formatTRY } from '../lib/format'
 import { dayChangeRatio, portfolioValue, totalEquity } from '../lib/portfolio'
 import { CATEGORY_LABELS, type Asset, type AssetCategory, type NewsItem, type Position } from '../lib/types'
@@ -14,6 +14,7 @@ const CATEGORY_FILTERS: Array<{ value: AssetCategory | 'all'; label: string }> =
   { value: 'commodity', label: 'Emtia' },
   { value: 'bond', label: 'Tahvil' },
   { value: 'crypto', label: 'Kripto' },
+  { value: 'fund', label: 'Fon' },
 ]
 
 export function MarketPage() {
@@ -30,6 +31,7 @@ export function MarketPage() {
     if (!profile) return
     setError(null)
     try {
+      await tickMarket()
       const [nextAssets, nextPositions, nextNews] = await Promise.all([
         fetchAssets(),
         fetchPositions(profile.id),
@@ -47,6 +49,13 @@ export function MarketPage() {
 
   useEffect(() => {
     void load()
+  }, [load])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      void load()
+    }, 60_000)
+    return () => window.clearInterval(timer)
   }, [load])
 
   const shareByAsset = useMemo(() => {
