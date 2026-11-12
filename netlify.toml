@@ -1,24 +1,46 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # Deployment preview ve branch deploy'larında build'i atla (build kredisi koruması).
+  # production dışındaki her context 0 ile çıkıp build'i iptal eder.
+  ignore = "node scripts/netlify-ignore.mjs"
 
 [build.environment]
   NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"
 
-# SPA yönlendirmesi: bilinmeyen tüm yollar index.html'e düşer
+# SPA: bilinmeyen tüm yollar index.html'e düşer
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Deploy preview'ları kapat: build kredisi tüketmesin (sadece main deploy eder)
-[context.deploy-preview]
-  command = "echo 'deploy preview devre dışı'"
-
+# ---------------------------------------------------------------------------
+# Güvenlik başlıkları
+# ---------------------------------------------------------------------------
 [[headers]]
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+
+# Vite hash'li varlıklar: sonsuz önbellek güvenli
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# index.html: her deploy'da tazelenmeli
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/favicon.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

@@ -76,9 +76,49 @@ scripts/
 - `portfolios` ve `transactions` yalnız kendi satırlarını okur; `anon` rolünün oyun verisine erişimi yoktur.
 - Liderlik tablosu `get_leaderboard()` RPC'siyle döner; başka oyuncuların profil satırları istemciye açılmaz.
 
-### Netlify kotası
+### Netlify kotası ve build kredisi koruması
 
-Statik SPA + CDN; SSR ve sürekli fonksiyon çağrısı yok. `dev` dalı Netlify'a bağlı değil, CI sadece GitHub'da koşar; deploy yalnız `main` güncellenince tetiklenir. `netlify.toml` deploy preview'ları kapatır.
+Statik SPA + CDN; SSR ve sürekli fonksiyon çağrısı yok. Krediyi tüketen tek şey build:
+
+- `netlify.toml` içindeki `ignore` komutu (`scripts/netlify-ignore.mjs`) **deploy preview** ve **branch deploy** context'lerinde build'i iptal eder; sadece production (`main`) build alır.
+- Netlify panelinde de şunları kapat: *Site configuration → Build & deploy → Branches and deploy contexts* → **Branch deploys: None**, **Deploy previews: Don't deploy pull requests**.
+- GitHub Actions Netlify kredisi harcamaz (GitHub'ın kendi runner'ında koşar); CI yine `dev` ve `main` push'larında çalışır.
+
+## Canlıya alma (Netlify)
+
+Deploy'u sen tetikleyeceksin; repo bunun için hazır. Sıra:
+
+1. **Supabase'i hazırla**
+   - Proje oluştur, `supabase/migrations` altındaki 4 dosyayı sırayla SQL Editor'de çalıştır.
+   - *Authentication → Sign In / Providers → Email*: e-posta doğrulaması istemiyorsan "Confirm email" kapat.
+2. **Netlify'a bağla**
+   - *Add new site → Import an existing project → GitHub → `finansal-okuryazarlik-oyunu`*.
+   - Production branch: **`main`**. Build komutu ve publish dizini `netlify.toml`'dan gelir (`npm run build` → `dist`), panelde değiştirme.
+3. **Ortam değişkenleri** (*Site configuration → Environment variables*)
+
+   | Değişken | Değer | Kapsam |
+   | --- | --- | --- |
+   | `VITE_SUPABASE_URL` | `https://<ref>.supabase.co` | Builds |
+   | `VITE_SUPABASE_ANON_KEY` | `anon` / `public` anahtar | Builds |
+
+   > `VITE_` önekli değişkenler **build sırasında** gömülür. Sonradan değiştirirsen *Deploys → Trigger deploy → Clear cache and deploy site* gerekir (1 build harcar). `service_role` anahtarını **hiçbir zaman** ekleme.
+
+4. **Supabase Auth URL'leri**
+   - *Authentication → URL Configuration*: **Site URL** = Netlify adresin (`https://<site>.netlify.app`), **Redirect URLs** = `https://<site>.netlify.app/**` (+ özel domain varsa onu da ekle).
+   - Bu adım atlanırsa kayıt/giriş sonrası yönlendirmeler çalışmaz.
+5. **İlk deploy sonrası kontrol**
+   - Ana sayfa açılıyor, "Kurulum gerekli" ekranı **gelmiyor**.
+   - Kayıt ol → 10.000 ₺ bakiye görünüyor.
+   - Bir varlık al → nakit düşüyor, portföyde pozisyon görünüyor.
+   - Liderlik tablosunda kullanıcı adın çıkıyor.
+
+### Ortam değişkenleri özeti
+
+| Dosya | Nerede | Amaç |
+| --- | --- | --- |
+| `.env` | Yerel (git'e girmez) | `npm run dev` |
+| Netlify Environment variables | Panel | Production build |
+| GitHub Secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) | Repo ayarları | CI build adımı (opsiyonel; yoksa build yine geçer) |
 
 ## Yol haritası
 
