@@ -145,6 +145,14 @@ Admin RPC'leri yalnızca `is_admin()` doğruysa çalışır; arayüzü gizlemek 
 - `pwsh scripts/db-verify.ps1` yerel Postgres'te şema/RLS/RPC senaryolarını çalıştırır.
 - Canlı projede 27 güvenlik testi: yetki yükseltme, transfer limitleri, RLS sızıntısı, doğrudan tablo yazımı, görev ödülünün tekrarı, zorla piyasa tick'i.
 
+## Futbol katmanı (11Btransfermarkt birleşmesi)
+
+- Oyuncular da birer `assets` kaydı (`category='player'`); `player_stats` tablosu FIFA tipi kart verisini tutar.
+- `play_match()` maçı sunucuda simüle eder: kadro gücüne göre skor, gol atanlar (şut ağırlıklı), her oyuncu için reyting/form, galibiyet ödülü (900/450/150 ₺), `career_matches` + `match_events` kaydı.
+- Oyuncu fiyatları piyasa motorundan geçer; gol atan oyuncunun fiyatı anında yükselir, form ortalaması kartta görünür.
+- `dev` akışı: Firebase'deki statik `initial-data.json` içe aktarıldı, fiyatlar ₺'ye ölçeklendi (`(overall-55)*120+400`).
+- Kadro sayfası: ilk 11, transfer pazarı, maç sonucu modalı, maç geçmişi.
+
 ## Yol haritası
 
 - [x] Faz 1 — Şema, RLS, atomik alım/satım, piyasa & portföy arayüzü

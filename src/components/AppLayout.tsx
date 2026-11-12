@@ -6,6 +6,7 @@ import { formatTRY } from '../lib/format'
 
 const links = [
   { to: '/', label: 'Piyasa', end: true },
+  { to: '/squad', label: 'Kadro', end: false },
   { to: '/news', label: 'Haberler', end: false },
   { to: '/missions', label: 'Görevler', end: false },
   { to: '/portfolio', label: 'Portföy', end: false },

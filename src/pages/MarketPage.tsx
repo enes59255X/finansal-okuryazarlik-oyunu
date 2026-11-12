@@ -15,6 +15,7 @@ const CATEGORY_FILTERS: Array<{ value: AssetCategory | 'all'; label: string }> =
   { value: 'bond', label: 'Tahvil' },
   { value: 'crypto', label: 'Kripto' },
   { value: 'fund', label: 'Fon' },
+  { value: 'player', label: 'Oyuncu' },
 ]
 
 export function MarketPage() {

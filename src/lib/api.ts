@@ -2,11 +2,14 @@ import { supabase } from './supabase'
 import type {
   AdminPlayer,
   Asset,
+  CareerMatch,
   GameState,
   LedgerEntry,
   LeaderboardRow,
+  MatchResult,
   Mission,
   NewsItem,
+  PlayerAsset,
   PlayerMission,
   Position,
   PricePoint,
@@ -172,14 +175,50 @@ export async function fetchLedger(limit = 20): Promise<LedgerEntry[]> {
   return unwrap(data as LedgerEntry[] | null, error)
 }
 
-export async function fetchScenarios(): Promise<Scenario[]> {
-  const { data, error } = await supabase
+export async function fetchScenarios(): Promise<Scenario[]> {  const { data, error } = await supabase
     .from('scenarios')
     .select('id, code, title, description, is_active, triggered_at')
     .eq('is_active', true)
     .order('title')
 
   return unwrap(data as Scenario[] | null, error)
+}
+
+// --- futbol ----------------------------------------------------------------
+
+export async function fetchPlayers(): Promise<PlayerAsset[]> {
+  const { data, error } = await supabase
+    .from('assets')
+    .select(
+      'id, symbol, name, category, current_price, previous_close, volatility, is_active, updated_at, player_stats (position, position_group, overall, pace, physical, dribbling, passing, shooting, defending, gk_diving, gk_handling, gk_kicking, gk_reflexes, gk_speed, gk_positioning, club, nationality, age, matches, goals, assists, form)',
+    )
+    .eq('category', 'player')
+    .eq('is_active', true)
+    .order('name')
+
+  if (error) throw new Error(error.message)
+
+  return (data ?? []).map((row) => {
+    const player = row as unknown as PlayerAsset & { player_stats: PlayerAsset['player_stats'] | PlayerAsset['player_stats'][] }
+    const stats = Array.isArray(player.player_stats) ? (player.player_stats[0] ?? null) : player.player_stats
+    return { ...player, player_stats: stats }
+  })
+}
+
+export async function playMatch(): Promise<MatchResult> {
+  const { data, error } = await supabase.rpc('play_match')
+  if (error) throw new Error(error.message)
+  return data as MatchResult
+}
+
+export async function fetchCareerMatches(limit = 8): Promise<CareerMatch[]> {
+  const { data, error } = await supabase
+    .from('career_matches')
+    .select('id, opponent, goals_for, goals_against, result, reward, squad_rating, played_at')
+    .order('played_at', { ascending: false })
+    .limit(limit)
+
+  return unwrap(data as CareerMatch[] | null, error)
 }
 
 // --- admin -----------------------------------------------------------------

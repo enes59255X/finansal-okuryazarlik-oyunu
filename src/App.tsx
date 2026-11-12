@@ -12,6 +12,7 @@ import { MarketPage } from './pages/MarketPage'
 import { MissionsPage } from './pages/MissionsPage'
 import { NewsPage } from './pages/NewsPage'
 import { PortfolioPage } from './pages/PortfolioPage'
+import { SquadPage } from './pages/SquadPage'
 
 export default function App() {
   if (!isSupabaseConfigured) return <ConfigNotice />
@@ -23,6 +24,7 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route index element={<MarketPage />} />
           <Route path="asset/:assetId" element={<AssetPage />} />
+          <Route path="squad" element={<SquadPage />} />
           <Route path="news" element={<NewsPage />} />
           <Route path="missions" element={<MissionsPage />} />
           <Route path="portfolio" element={<PortfolioPage />} />
